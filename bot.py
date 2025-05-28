@@ -72,7 +72,7 @@ def send_text(message):
             bot.send_message(message.chat.id,
                              f"""Вы не можете завершить работу
 с сервисом BrowserStack.
-В даный момент он используется пользователем 
+В данный момент он используется пользователем 
 {user['first_name']} {user['last_name']} {user['username']} """
                              )
 
