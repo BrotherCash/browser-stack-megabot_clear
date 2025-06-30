@@ -4,9 +4,9 @@ import os
 
 
 # @BrowserStackMegaBot
-# bot = telebot.TeleBot('1206228272:AAFpEDuDi8ROgwobeuEBLt1_lydu_BUT1kA')
+bot = telebot.TeleBot('1206228272:AAFpEDuDi8ROgwobeuEBLt1_lydu_BUT1kA')
 # @brother_cash_test_bot:
-bot = telebot.TeleBot('971432781:AAHoOLTxCbEd_fLXo6-yCYihjc45TW-datY')
+# bot = telebot.TeleBot('971432781:AAHoOLTxCbEd_fLXo6-yCYihjc45TW-datY')
 
 busy = False
 user = {
