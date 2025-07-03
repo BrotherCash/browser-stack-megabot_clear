@@ -30,7 +30,21 @@ ADMIN_NAME = 'Игорь Владимирович'
 
 
 def init_database():
-    conn = sqlite3.connect(DB_NAME)
+    global DB_NAME
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        # Test write access by attempting to create a table
+        cursor = conn.cursor()
+        cursor.execute('CREATE TABLE IF NOT EXISTS test_table (id INTEGER)')
+        cursor.execute('DROP TABLE IF EXISTS test_table')
+        conn.commit()
+    except (sqlite3.OperationalError, sqlite3.DatabaseError) as e:
+        print(f"Database error: {e}")
+        # Fallback to local database if mounted path is not accessible or readonly
+        DB_NAME = 'bot_users.db'
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+    
     cursor = conn.cursor()
 
     cursor.execute('''
