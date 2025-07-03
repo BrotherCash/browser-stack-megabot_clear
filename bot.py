@@ -1,6 +1,8 @@
 import telebot
 import sqlite3
 import os
+import time
+import logging
 from dotenv import load_dotenv
 
 
@@ -23,7 +25,7 @@ user = {
 }
 
 # Database setup
-DB_NAME = os.environ.get('DB_PATH', 'bot_users.db')
+DB_NAME = os.environ.get('DB_PATH')
 ADMIN_ID = int(os.environ.get('ADMIN_ID', 31653534)) # с значением по умолчанию
 ADMIN_USERNAME = 'BrotherCash'
 ADMIN_NAME = 'Игорь Владимирович'
@@ -484,4 +486,45 @@ def handle_callbacks(call):
             )
 
 
-bot.polling(none_stop=True)
+def run_bot():
+    """Запуск бота с обработкой сетевых ошибок и автоматическим переподключением"""
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
+    
+    retry_count = 0
+    max_retries = 5
+    base_delay = 10
+    
+    while True:
+        try:
+            logging.info(f"Запуск бота (попытка {retry_count + 1})")
+            bot.polling(none_stop=True, interval=1, timeout=20)
+            
+        except Exception as e:
+            retry_count += 1
+            error_msg = str(e)
+            
+            if "Connection aborted" in error_msg or "Connection broken" in error_msg or \
+               "Network is unreachable" in error_msg or "Read timed out" in error_msg or \
+               "Connection reset" in error_msg or "Name or service not known" in error_msg:
+                
+                delay = min(base_delay * (2 ** min(retry_count - 1, 4)), 300)
+                logging.warning(f"Сетевая ошибка: {error_msg}")
+                logging.info(f"Переподключение через {delay} сек (попытка {retry_count}/{max_retries})")
+                
+                if retry_count >= max_retries:
+                    logging.error(f"Превышено максимальное количество попыток ({max_retries}). Сброс счетчика.")
+                    retry_count = 0
+                    delay = 60
+                
+                time.sleep(delay)
+                continue
+            else:
+                logging.error(f"Критическая ошибка: {error_msg}")
+                raise
+
+
+if __name__ == "__main__":
+    run_bot()
