@@ -1,12 +1,18 @@
 import telebot
 import sqlite3
 import os
+from dotenv import load_dotenv
 
 
-# @BrowserStackMegaBot
-bot = telebot.TeleBot('1206228272:AAFpEDuDi8ROgwobeuEBLt1_lydu_BUT1kA')
-# @brother_cash_test_bot:
-# bot = telebot.TeleBot('971432781:AAHoOLTxCbEd_fLXo6-yCYihjc45TW-datY')
+# Загружаем переменные из .env файла (если он есть)
+load_dotenv()
+
+# Получаем токен из переменной окружения
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+if not BOT_TOKEN:
+    raise ValueError("Необходимо установить переменную окружения BOT_TOKEN")
+
+bot = telebot.TeleBot(BOT_TOKEN)
 
 busy = False
 user = {
@@ -17,13 +23,14 @@ user = {
 }
 
 # Database setup
-DB_NAME = 'bot_users.db'
-ADMIN_ID = 31653534
+DB_NAME = os.environ.get('DB_PATH', 'bot_users.db')
+ADMIN_ID = int(os.environ.get('ADMIN_ID', 31653534)) # с значением по умолчанию
 ADMIN_USERNAME = 'BrotherCash'
 ADMIN_NAME = 'Игорь Владимирович'
 
 
 def init_database():
+    os.makedirs(os.path.dirname(DB_NAME), exist_ok=True)
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
