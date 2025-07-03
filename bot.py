@@ -30,7 +30,6 @@ ADMIN_NAME = 'Игорь Владимирович'
 
 
 def init_database():
-    os.makedirs(os.path.dirname(DB_NAME), exist_ok=True)
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
