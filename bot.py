@@ -366,8 +366,12 @@ def handle_callbacks(call):
         
         keyboard.add(telebot.types.InlineKeyboardButton('🔄 Обновить список', callback_data='refresh_users'))
         
-        bot.edit_message_text(text, call.message.chat.id, call.message.message_id, 
-                             parse_mode='Markdown', reply_markup=keyboard)
+        try:
+            bot.edit_message_text(text, call.message.chat.id, call.message.message_id, 
+                                 parse_mode='Markdown', reply_markup=keyboard)
+        except Exception as e:
+            if "message is not modified" not in str(e):
+                raise e
         bot.answer_callback_query(call.id, 'Список обновлен')
         return
 
@@ -414,8 +418,12 @@ def handle_callbacks(call):
             
         keyboard.add(telebot.types.InlineKeyboardButton('🔙 Назад к списку', callback_data='refresh_users'))
         
-        bot.edit_message_text(text, call.message.chat.id, call.message.message_id, 
-                             parse_mode='Markdown', reply_markup=keyboard)
+        try:
+            bot.edit_message_text(text, call.message.chat.id, call.message.message_id, 
+                                 parse_mode='Markdown', reply_markup=keyboard)
+        except Exception as e:
+            if "message is not modified" not in str(e):
+                raise e
         bot.answer_callback_query(call.id)
         return
 
